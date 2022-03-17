@@ -117,6 +117,7 @@ app.get('/get-banks', async (req, res) => {
       "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
     } 
   });
+  res.set('Access-Control-Allow-Origin', '*');
   res.send(response.data)
 })
 
