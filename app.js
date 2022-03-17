@@ -31,8 +31,8 @@ app.use('/users', usersRouter);
 app.post('/payment-auth', async (req, res) => {
   const userId = uuidv4().substring(0,15)
   const {institutionId} = req.body
-
-  const response = await axios.post("https://api.yapily.com/payment-auth-requests",
+  try {
+    const response = await axios.post("https://api.yapily.com/payment-auth-requests",
   {
     "applicationUserId": userId,
     "institutionId": institutionId,
@@ -71,6 +71,9 @@ app.post('/payment-auth', async (req, res) => {
       "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
     } });
     res.status(200).send(response.data.data.authorisationUrl)
+  } catch (error) {
+    res.status(400).send(error)
+  }
   })
 
 app.get('/callback', async (req, res) => {
@@ -103,7 +106,6 @@ app.get('/callback', async (req, res) => {
     },
   },
   {
-    withCredentials: false,
     headers:{
       "Content-Type": "application/json",
       "Consent": req.query.consent || "test consent",
