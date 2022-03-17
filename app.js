@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.post('/payment-auth', cors(), async (req, res) => {
+app.post('/payment-auth', async (req, res) => {
   const userId = uuidv4().substring(0,15)
   const {institutionId} = req.body
 
@@ -71,7 +71,7 @@ app.post('/payment-auth', cors(), async (req, res) => {
     res.status(200).send(response.data.data.authorisationUrl)
   })
 
-app.get('/callback', cors(), async (req, res) => {
+app.get('/callback', async (req, res) => {
   const response = 
   await axios
   .post("https://api.yapily.com/payments",
@@ -112,7 +112,7 @@ app.get('/callback', cors(), async (req, res) => {
 })
 
 
-app.get('/get-banks',cors(), async (req, res) => {
+app.get('/get-banks', async (req, res) => {
   const response = 
   await axios
   .get("https://api.yapily.com/institutions",{
