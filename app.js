@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid');
 
@@ -19,21 +20,25 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.post('/payment-auth', async (req, res) => {
+app.post('/payment-auth', cors(), async (req, res) => {
+  const userId = uuidv4().substring(0,15)
+  const {institutionId} = req.body
+
   const response = await axios.post("https://api.yapily.com/payment-auth-requests",
   {
-    "applicationUserId": "single-payment-tutorial",
-    "institutionId": "modelo-sandbox",
-    "callback": "https://81e2-197-48-230-229.ngrok.io/callback",
+    "applicationUserId": userId,
+    "institutionId": institutionId,
+    "callback": "https://node-standalone.herokuapp.com/callback",
     "paymentRequest": {
       "type": "DOMESTIC_PAYMENT",
       "reference": "Bills",
-      "paymentIdempotencyId": "81e2-197-48-230-237",
+      "paymentIdempotencyId": userId + "-modelo-sandbox",
       "amount": {
         "amount": 8.70,
         "currency": "GBP"
@@ -66,14 +71,14 @@ app.post('/payment-auth', async (req, res) => {
     res.status(200).send(response.data.data.authorisationUrl)
   })
 
-app.get('/callback', async (req, res) => {
+app.get('/callback', cors(), async (req, res) => {
   const response = 
   await axios
   .post("https://api.yapily.com/payments",
   {
     "type": "DOMESTIC_PAYMENT",
     "reference": "Bills",
-    "paymentIdempotencyId": "81e2-197-48-230-237",
+    "paymentIdempotencyId": req.query["application-user-id"] + "-" + req.query["institution"],
     "amount": {
       "amount": 8.70,
       "currency": "GBP"
@@ -103,12 +108,11 @@ app.get('/callback', async (req, res) => {
       "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
     } 
   });
-  
   res.send(response.data)
 })
 
 
-app.get('/get-banks', async (req, res) => {
+app.get('/get-banks',cors(), async (req, res) => {
   const response = 
   await axios
   .get("https://api.yapily.com/institutions",{
@@ -117,7 +121,6 @@ app.get('/get-banks', async (req, res) => {
       "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
     } 
   });
-  res.set('Access-Control-Allow-Origin', '*');
   res.send(response.data)
 })
 
