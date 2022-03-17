@@ -108,6 +108,18 @@ app.get('/callback', async (req, res) => {
 })
 
 
+app.get('/get-banks', async (req, res) => {
+  const response = 
+  await axios
+  .get("https://api.yapily.com/institutions",{
+    withCredentials: false,
+    headers:{
+      "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
+    } 
+  });
+  res.send(response.data)
+})
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
