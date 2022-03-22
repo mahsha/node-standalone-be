@@ -112,7 +112,8 @@ app.get('/callback', async (req, res) => {
       "Authorization": "Basic YzRlZTRmZjItNDViYy00N2ViLWE5NzgtODc3ZjA3NWU3YmQ3OjA5NWJhNTc1LWU0YTYtNGFmNC1hYTczLWM1MWQyZDBmYjk2MQ=="
     } 
   });
-  res.send(response.data)
+  // res.send(response.data)
+  res.status(301).send("http://localhost:3001/success")
 })
 
 
