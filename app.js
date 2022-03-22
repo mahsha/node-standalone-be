@@ -113,7 +113,7 @@ app.get('/callback', async (req, res) => {
     } 
   });
   // res.send(response.data)
-  res.status(301).redirect("http://localhost:3001/success")
+  res.status(301).redirect("https://pay-with-boost.web.app/success")
 })
 
 
